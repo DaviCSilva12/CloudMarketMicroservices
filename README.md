@@ -2,14 +2,6 @@
  
 ## Projeto de Microsserviços com Laravel, Node.js, React, Docker, Kubernetes e Google Cloud
  
-> ⚠️ **Nota de arquitetura:** este documento descreve o planejamento e as decisões
-> técnicas do projeto, mas a **arquitetura oficial e atualizada** do CloudMarket
-> deve ser consultada em [`/architecture.md`](./architecture.md), na raiz do
-> repositório. Qualquer implementação deve seguir o que está definido em `architecture.md`
-> como fonte da verdade.
- 
----
- 
 ## 1. Visão Geral
  
 O **CloudMarket** é uma mini plataforma de e-commerce construída com arquitetura de
