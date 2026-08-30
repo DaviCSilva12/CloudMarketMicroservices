@@ -1,0 +1,6 @@
+.agent/
+.idea/
+.vscode/
+node_modules/
+vendor/
+.env
