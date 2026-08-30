@@ -1,0 +1,172 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # BANCOS DE DADOS
+  # ==========================================
+  mysql-product:
+    image: mysql:8.0
+    container_name: mysql-product
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: product_db
+      MYSQL_USER: clouduser
+      MYSQL_PASSWORD: cloudpassword
+    ports:
+      - "33061:3306"
+    volumes:
+      - product-db-data:/var/lib/mysql
+    networks:
+      - cloudmarket-net
+
+  mysql-user:
+    image: mysql:8.0
+    container_name: mysql-user
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: clouduser
+      MYSQL_PASSWORD: cloudpassword
+    ports:
+      - "33062:3306"
+    volumes:
+      - user-db-data:/var/lib/mysql
+    networks:
+      - cloudmarket-net
+
+  mysql-order:
+    image: mysql:8.0
+    container_name: mysql-order
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: order_db
+      MYSQL_USER: clouduser
+      MYSQL_PASSWORD: cloudpassword
+    ports:
+      - "33063:3306"
+    volumes:
+      - order-db-data:/var/lib/mysql
+    networks:
+      - cloudmarket-net
+
+  # ==========================================
+  # MICROSSERVIÇOS (BACKEND - LARAVEL)
+  # ==========================================
+  product-service:
+    build:
+      context: ./services/product-service
+      dockerfile: Dockerfile
+    container_name: product-service
+    restart: always
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql-product
+      - DB_PORT=3306
+      - DB_DATABASE=product_db
+      - DB_USERNAME=clouduser
+      - DB_PASSWORD=cloudpassword
+      - APP_ENV=production
+      - APP_DEBUG=false
+    ports:
+      - "8001:80"
+    depends_on:
+      - mysql-product
+    networks:
+      - cloudmarket-net
+
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    restart: always
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql-user
+      - DB_PORT=3306
+      - DB_DATABASE=user_db
+      - DB_USERNAME=clouduser
+      - DB_PASSWORD=cloudpassword
+      - APP_ENV=production
+      - APP_DEBUG=false
+    ports:
+      - "8002:80"
+    depends_on:
+      - mysql-user
+    networks:
+      - cloudmarket-net
+
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    container_name: order-service
+    restart: always
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql-order
+      - DB_PORT=3306
+      - DB_DATABASE=order_db
+      - DB_USERNAME=clouduser
+      - DB_PASSWORD=cloudpassword
+      - PRODUCT_SERVICE_URL=http://product-service:80/api
+      - APP_ENV=production
+      - APP_DEBUG=false
+    ports:
+      - "8003:80"
+    depends_on:
+      - mysql-order
+      - product-service
+    networks:
+      - cloudmarket-net
+
+  # ==========================================
+  # API GATEWAY (NODE.JS)
+  # ==========================================
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    restart: always
+    environment:
+      - PORT=3000
+      - PRODUCT_SERVICE_URL=http://product-service:80
+      - USER_SERVICE_URL=http://user-service:80
+      - ORDER_SERVICE_URL=http://order-service:80
+    ports:
+      - "3000:3000"
+    depends_on:
+      - product-service
+      - user-service
+      - order-service
+    networks:
+      - cloudmarket-net
+
+  # ==========================================
+  # FRONTEND (REACT + NGINX)
+  # ==========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - cloudmarket-net
+
+volumes:
+  product-db-data:
+  user-db-data:
+  order-db-data:
+
+networks:
+  cloudmarket-net:
+    driver: bridge
