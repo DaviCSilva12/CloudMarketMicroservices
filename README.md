@@ -67,3 +67,61 @@ CloudMarket/
 8. **Kubernetes:** Manifests completos.
 9. **Google Cloud:** Deploy real no GKE.
 10. **Melhorias:** Logs, monitoring, autoscaling.
+
+## ☁️ Fase 9: Deploy no Google Cloud (GKE)
+
+O projeto foi desenhado para ser Cloud-Native. Para subir esta estrutura no Google Cloud Platform, siga os passos abaixo:
+
+1. **Configurar Projeto e Autenticação:**
+   ```bash
+   gcloud auth login
+   gcloud config set project SEU_ID_DO_PROJETO
+   ```
+
+2. **Criar o Cluster Kubernetes (GKE):**
+   ```bash
+   gcloud container clusters create cloudmarket-cluster \
+       --num-nodes=3 --zone=us-central1-a
+   gcloud container clusters get-credentials cloudmarket-cluster
+   ```
+
+3. **Fazer o Build e Push das Imagens (Artifact Registry):**
+   ```bash
+   docker build -t gcr.io/SEU_ID_DO_PROJETO/cloudmarket-product ./services/product-service
+   docker push gcr.io/SEU_ID_DO_PROJETO/cloudmarket-product
+   # (Repita para user-service, order-service, api-gateway e frontend)
+   ```
+
+4. **Aplicar os Manifestos no Cluster:**
+   ```bash
+   kubectl apply -f k8s/deployments.yaml
+   kubectl apply -f k8s/services.yaml
+   ```
+
+5. **Acessar a Aplicação:**
+   O K8s vai provisionar um Load Balancer para o Frontend. Descubra o IP externo com:
+   ```bash
+   kubectl get services
+   ```
+   Acesse o IP público fornecido no navegador!
+
+---
+
+## 📈 Fase 10: Melhorias, Escalabilidade e Testes
+
+### 1. Testes de Carga (k6)
+Na pasta `/load-tests` está o script para testar o limite da arquitetura simulando múltiplos clientes simultâneos.
+* **Rodando o Teste:** Instale o k6 (https://k6.io/) e execute:
+  ```bash
+  k6 run load-tests/script.js
+  ```
+  *(O teste verifica se 95% das requisições respondem em menos de 500ms e falham em menos de 1%).*
+
+### 2. Auto-scaling (HPA)
+No Kubernetes, criamos o manifesto `/k8s/hpa.yaml`. Ele configura o **Horizontal Pod Autoscaler**, garantindo que:
+* Se o uso de CPU de qualquer microsserviço ou do Gateway ultrapassar **70%** (ex: durante a Black Friday), o GKE automaticamente criará novas réplicas (pods) até um limite de 10.
+* Quando o tráfego diminuir, ele destrói os containers extras economizando recursos.
+* **Para ativar:** `kubectl apply -f k8s/hpa.yaml`
+
+### 3. Monitoramento Avançado
+Como próximos passos para um ambiente de produção real, é recomendado integrar o **Prometheus + Grafana** para visualizar as métricas dos containers, e utilizar o stack **ELK** (Elasticsearch, Logstash, Kibana) para centralizar os logs gerados pelo `morgan` no Gateway.
