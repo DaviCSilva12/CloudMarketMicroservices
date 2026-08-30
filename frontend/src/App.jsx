@@ -17,7 +17,9 @@ function App() {
     try {
       setLoading(true);
       const response = await axios.get(`${API_URL}/products`);
-      setProducts(response.data);
+      // O Laravel retorna os dados paginados dentro da propriedade 'data'
+      const productsArray = response.data.data ? response.data.data : response.data;
+      setProducts(Array.isArray(productsArray) ? productsArray : []);
       setError(null);
     } catch (err) {
       console.error('Erro ao buscar produtos:', err);
