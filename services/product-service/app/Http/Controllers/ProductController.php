@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
+    // Utiliza injeção de dependência via construtor para acoplar o serviço de negócios de forma desacoplada
     public function __construct(protected ProductService $productService)
     {}
 
@@ -17,6 +18,7 @@ class ProductController extends Controller
      */
     public function index(): JsonResponse
     {
+        // Delega a regra de negócio e paginação para o Service Layer
         $products = $this->productService->getAllProducts(15);
         return response()->json($products);
     }
@@ -27,7 +29,9 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request): JsonResponse
     {
         try {
+            // O request já foi validado pelo StoreProductRequest, garantindo segurança na entrada de dados
             $product = $this->productService->createProduct($request->validated());
+            // Retorna o status HTTP 201 (Created) para uma inserção bem sucedida
             return response()->json($product, 201);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);

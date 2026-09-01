@@ -9,15 +9,19 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Utiliza useEffect para buscar os produtos apenas na primeira renderização (montagem do componente)
   useEffect(() => {
     fetchProducts();
   }, []);
 
   const fetchProducts = async () => {
     try {
+      // Define o estado de carregamento como verdadeiro antes de iniciar a requisição
       setLoading(true);
       const response = await axios.get(`${API_URL}/products`);
+      
       // O Laravel retorna os dados paginados dentro da propriedade 'data'
+      // Verificamos a estrutura da resposta para garantir compatibilidade e evitar quebras de renderização
       const productsArray = response.data.data ? response.data.data : response.data;
       setProducts(Array.isArray(productsArray) ? productsArray : []);
       setError(null);
