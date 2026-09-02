@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ShoppingCart, Package } from 'lucide-react';
+import Header from './components/Header';
+import HeroSection from './components/HeroSection';
+import DealsSection from './components/DealsSection';
+import CategoryBlock from './components/CategoryBlock';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -9,19 +12,15 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Utiliza useEffect para buscar os produtos apenas na primeira renderização (montagem do componente)
   useEffect(() => {
     fetchProducts();
   }, []);
 
   const fetchProducts = async () => {
     try {
-      // Define o estado de carregamento como verdadeiro antes de iniciar a requisição
       setLoading(true);
       const response = await axios.get(`${API_URL}/products`);
       
-      // O Laravel retorna os dados paginados dentro da propriedade 'data'
-      // Verificamos a estrutura da resposta para garantir compatibilidade e evitar quebras de renderização
       const productsArray = response.data.data ? response.data.data : response.data;
       setProducts(Array.isArray(productsArray) ? productsArray : []);
       setError(null);
@@ -33,67 +32,96 @@ function App() {
     }
   };
 
+  // Dados mockados para o primeiro bloco, igual ao mockup
+  const homeProducts = [
+    { id: 1, name: 'Soft chairs', price: '19', image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?q=80&w=150&auto=format&fit=crop' },
+    { id: 2, name: 'Sofa & chair', price: '19', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=150&auto=format&fit=crop' },
+    { id: 3, name: 'Kitchen mixer', price: '100', image: 'https://images.unsplash.com/photo-1593998066526-65fcab3021a2?q=80&w=150&auto=format&fit=crop' },
+    { id: 4, name: 'Smart watches', price: '19', image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=150&auto=format&fit=crop' },
+    { id: 5, name: 'Coffee maker', price: '10', image: 'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?q=80&w=150&auto=format&fit=crop' },
+    { id: 6, name: 'Home appliance', price: '90', image: 'https://images.unsplash.com/photo-1585223199586-a3bd8d23469b?q=80&w=150&auto=format&fit=crop' },
+    { id: 7, name: 'Plant pot', price: '19', image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=150&auto=format&fit=crop' },
+    { id: 8, name: 'Sofa & chair', price: '19', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=150&auto=format&fit=crop' },
+  ];
+
+  // Mapear produtos da API para o formato do CategoryBlock (ou usar fallback)
+  const apiProductsMapped = products.slice(0, 8).map(p => ({
+    id: p.id,
+    name: p.name,
+    price: Number(p.price).toFixed(0),
+    image: null // API não tem imagem por padrão
+  }));
+
+  // Completar com mocks se a API não retornar 8 itens
+  const electronicsProducts = apiProductsMapped.length === 8 ? apiProductsMapped : [
+    ...apiProductsMapped,
+    ...Array(8 - apiProductsMapped.length).fill(0).map((_, i) => ({
+      id: `mock-${i}`,
+      name: 'Product from API pending',
+      price: '99',
+      image: 'https://images.unsplash.com/photo-1550009158-9ebf6d173cdea?q=80&w=150&auto=format&fit=crop'
+    }))
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
-      <header className="bg-blue-600 text-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Package size={24} />
-            <h1 className="text-xl font-bold">CloudMarket</h1>
-          </div>
-          <div>
-            <button className="flex items-center gap-2 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
-              <ShoppingCart size={20} />
-              <span>Carrinho</span>
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-100 font-sans pb-12">
+      <Header />
+      
+      <main>
+        <HeroSection />
+        
+        <DealsSection />
+        
+        <CategoryBlock 
+          title="Home and outdoor products"
+          buttonText="Explore all"
+          bannerImage="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=300&auto=format&fit=crop"
+          products={homeProducts}
+        />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Nossos Produtos</h2>
+        <CategoryBlock 
+          title="Consumer electronics and gadgets"
+          buttonText="Explore all"
+          bannerImage="https://images.unsplash.com/photo-1550009158-9ebf6d173cdea?q=80&w=300&auto=format&fit=crop"
+          products={electronicsProducts}
+        />
 
-        {loading && (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
-        )}
+        {/* Mantivemos o bloco original de produtos para não quebrar a lógica de exibição completa do backend */}
+        <section className="max-w-7xl mx-auto px-4 py-8">
+          <h2 className="text-xl font-bold text-gray-800 mb-6">Todos os Produtos (API)</h2>
+          
+          {loading && (
+            <div className="flex justify-center items-center py-6">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          )}
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded text-sm">
+              {error}
+            </div>
+          )}
 
-        {!loading && !error && (
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.length === 0 ? (
-              <p className="text-gray-500 col-span-full text-center py-12">Nenhum produto cadastrado ainda.</p>
-            ) : (
-              products.map((product) => (
-                <div key={product.id} className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="p-5">
-                    <h3 className="font-semibold text-lg text-gray-800 mb-2">{product.name}</h3>
-                    <p className="text-gray-500 text-sm mb-4 line-clamp-2">{product.description}</p>
-                    <div className="flex justify-between items-center mt-4">
-                      <span className="text-xl font-bold text-blue-600">
+          {!loading && !error && (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {products.length === 0 ? (
+                <p className="text-gray-500 col-span-full text-center py-8">Nenhum produto cadastrado.</p>
+              ) : (
+                products.map((product) => (
+                  <div key={product.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-medium text-gray-800 text-sm line-clamp-2">{product.name}</h3>
+                      <p className="text-blue-600 font-bold mt-2">
                         R$ {Number(product.price).toFixed(2).replace('.', ',')}
-                      </span>
-                      <span className="text-xs font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                        Estoque: {product.stock}
-                      </span>
+                      </p>
                     </div>
+                    <span className="text-xs text-gray-400 mt-2">Estoque: {product.stock}</span>
                   </div>
-                  <div className="px-5 pb-5">
-                    <button className="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-2 rounded-lg transition-colors">
-                      Comprar
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        )}
+                ))
+              )}
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );
