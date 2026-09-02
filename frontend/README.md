@@ -1,16 +1,42 @@
-# React + Vite
+# CloudMarket - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Este é o módulo de front-end do projeto **CloudMarket**, desenvolvido com React, Vite e Tailwind CSS.
 
-Currently, two official plugins are available:
+## 🛠️ Tecnologias Utilizadas
+- **React 19**
+- **Vite** para build e servidor de desenvolvimento super rápido.
+- **Tailwind CSS v4** para estilização utilitária e design responsivo.
+- **Lucide React** para os ícones.
+- **Axios** para requisições HTTP ao API Gateway.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📂 Arquitetura e Componentização
 
-## React Compiler
+A interface do usuário foi construída seguindo as melhores práticas de modularidade, baseada num mockup de e-commerce moderno. A estrutura de componentes encontra-se em `src/components/`:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `Header.jsx`: Cabeçalho principal com busca, navegação e botão para alternar entre **Modo Claro / Modo Escuro**.
+- `HeroSection.jsx`: Destaque inicial da página contendo banners promocionais e menu lateral.
+- `DealsSection.jsx`: Seção dedicada a ofertas por tempo limitado.
+- `CategoryBlock.jsx`: Componente reutilizável para listagem de produtos agrupados por categoria.
 
-## Expanding the Oxlint configuration
+O arquivo `App.jsx` funciona como o orquestrador (container component), responsável por fazer o fetching dos dados na API e distribuir (via props) para os componentes visuais.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## 🌗 Tema Escuro (Dark Mode)
+
+A aplicação possui suporte nativo ao Modo Escuro. O estado do tema é gerenciado no `Header` e aciona a classe `.dark` global do Tailwind CSS, alterando o visual de toda a plataforma sem recarregar a página.
+
+## 🚀 Como Executar Localmente
+
+1. Entre na pasta do frontend:
+   ```bash
+   cd frontend
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+
+Acesse o endereço fornecido no terminal (geralmente `http://localhost:5173`) para visualizar o frontend. Certifique-se de que o **API Gateway** e os microsserviços estejam rodando em background para consumo real de dados.

@@ -62,7 +62,7 @@ CloudMarket/
 3. **User Service:** Laravel + MySQL + cadastro/consulta.
 4. **Order Service:** Laravel + MySQL + comunicação com Product Service.
 5. **API Gateway:** Node.js roteando para os 3 serviços.
-6. **React:** Frontend consumindo só o Gateway.
+6. **React:** Frontend modularizado (componentes reutilizáveis), estilizado com Tailwind CSS v4, suporte a Dark Mode e consumindo o Gateway.
 7. **Docker Compose:** Ambiente local integrado.
 8. **Kubernetes:** Manifests completos.
 9. **Google Cloud:** Deploy real no GKE.
