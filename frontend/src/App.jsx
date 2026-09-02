@@ -64,7 +64,7 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans pb-12">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 font-sans pb-12 transition-colors duration-200">
       <Header />
       
       <main>
@@ -88,7 +88,7 @@ function App() {
 
         {/* Mantivemos o bloco original de produtos para não quebrar a lógica de exibição completa do backend */}
         <section className="max-w-7xl mx-auto px-4 py-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-6">Todos os Produtos (API)</h2>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 transition-colors">Todos os Produtos (API)</h2>
           
           {loading && (
             <div className="flex justify-center items-center py-6">
