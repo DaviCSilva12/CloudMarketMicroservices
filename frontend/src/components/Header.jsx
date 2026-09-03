@@ -18,10 +18,11 @@ const Header = () => {
   };
 
   return (
+    // Elemento principal do cabeçalho (Header) com cores de fundo que suportam os modos claro e escuro
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 font-sans transition-colors duration-200">
-      {/* Top Header */}
+      {/* Seção Superior do Cabeçalho */}
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center gap-6">
-        {/* Logo */}
+        {/* Logotipo e Nome da Marca */}
         <div className="flex items-center gap-2 cursor-pointer">
           <div className="bg-blue-600 p-1.5 rounded-md">
             <Package size={20} className="text-white" />
@@ -29,7 +30,7 @@ const Header = () => {
           <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400 tracking-tight">Brandname</h1>
         </div>
 
-        {/* Search Bar */}
+        {/* Barra de Pesquisa */}
         <div className="flex-1 max-w-2xl hidden md:flex border-2 border-blue-600 rounded-lg overflow-hidden h-10">
           <input 
             type="text" 
@@ -45,10 +46,10 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Action Icons */}
+        {/* Ícones de Ação (Tema, Pedidos, Favoritos, Carrinho, Login) */}
         <div className="flex items-center gap-6 text-gray-500 dark:text-gray-400">
           
-          {/* Theme Toggle Button */}
+          {/* Botão de Alternância de Tema Escuro/Claro */}
           <button 
             onClick={toggleTheme}
             className="flex flex-col items-center cursor-pointer hover:text-blue-600 transition-colors bg-gray-100 dark:bg-gray-800 p-2 rounded-full"
@@ -75,7 +76,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Navigation Bar */}
+      {/* Barra de Navegação Inferior */}
       <div className="border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 h-12 flex justify-between items-center text-sm font-medium">
           <div className="flex items-center gap-6">

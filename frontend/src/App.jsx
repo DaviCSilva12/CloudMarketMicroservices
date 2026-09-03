@@ -32,7 +32,7 @@ function App() {
     }
   };
 
-  // Dados mockados para o primeiro bloco, igual ao mockup
+  // Dados mockados (simulados) para o primeiro bloco de produtos na tela inicial
   const homeProducts = [
     { id: 1, name: 'Soft chairs', price: '19', image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?q=80&w=150&auto=format&fit=crop' },
     { id: 2, name: 'Sofa & chair', price: '19', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=150&auto=format&fit=crop' },
@@ -42,17 +42,22 @@ function App() {
     { id: 6, name: 'Home appliance', price: '90', image: 'https://images.unsplash.com/photo-1585223199586-a3bd8d23469b?q=80&w=150&auto=format&fit=crop' },
     { id: 7, name: 'Plant pot', price: '19', image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=150&auto=format&fit=crop' },
     { id: 8, name: 'Sofa & chair', price: '19', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=150&auto=format&fit=crop' },
+    // Adicionando novos itens para compra como solicitado
+    { id: 9, name: 'Dining Table', price: '150', image: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?q=80&w=150&auto=format&fit=crop' },
+    { id: 10, name: 'Modern Lamp', price: '45', image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=150&auto=format&fit=crop' },
+    { id: 11, name: 'Wall Clock', price: '25', image: 'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?q=80&w=150&auto=format&fit=crop' },
+    { id: 12, name: 'Bookshelf', price: '85', image: 'https://images.unsplash.com/photo-1594620302200-9a762244a156?q=80&w=150&auto=format&fit=crop' }
   ];
 
-  // Mapear produtos da API para o formato do CategoryBlock (ou usar fallback)
+  // Mapear produtos recebidos da API para o formato esperado pelo CategoryBlock
   const apiProductsMapped = products.slice(0, 8).map(p => ({
     id: p.id,
     name: p.name,
     price: Number(p.price).toFixed(0),
-    image: null // API não tem imagem por padrão
+    image: null // A API não fornece imagem por padrão, então deixamos nulo
   }));
 
-  // Completar com mocks se a API não retornar 8 itens
+  // Completar com dados simulados caso a API retorne menos de 8 itens para não quebrar o layout
   const electronicsProducts = apiProductsMapped.length === 8 ? apiProductsMapped : [
     ...apiProductsMapped,
     ...Array(8 - apiProductsMapped.length).fill(0).map((_, i) => ({
@@ -63,8 +68,9 @@ function App() {
     }))
   ];
 
+  // Retorna a estrutura principal da aplicação, aplicando as classes de cor do tema
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 font-sans pb-12 transition-colors duration-200">
+    <div className="min-h-screen bg-gray-300 dark:bg-black font-sans pb-12 transition-colors duration-200">
       <Header />
       
       <main>
@@ -86,7 +92,7 @@ function App() {
           products={electronicsProducts}
         />
 
-        {/* Mantivemos o bloco original de produtos para não quebrar a lógica de exibição completa do backend */}
+        {/* Bloco que exibe os produtos diretamente da API, mantido para evitar problemas de exibição */}
         <section className="max-w-7xl mx-auto px-4 py-8">
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 transition-colors">Todos os Produtos (API)</h2>
           
@@ -108,10 +114,10 @@ function App() {
                 <p className="text-gray-500 col-span-full text-center py-8">Nenhum produto cadastrado.</p>
               ) : (
                 products.map((product) => (
-                  <div key={product.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex flex-col justify-between">
+                  <div key={product.id} className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-medium text-gray-800 text-sm line-clamp-2">{product.name}</h3>
-                      <p className="text-blue-600 font-bold mt-2">
+                      <h3 className="font-medium text-gray-800 dark:text-gray-100 text-sm line-clamp-2">{product.name}</h3>
+                      <p className="text-blue-600 dark:text-blue-400 font-bold mt-2">
                         R$ {Number(product.price).toFixed(2).replace('.', ',')}
                       </p>
                     </div>
