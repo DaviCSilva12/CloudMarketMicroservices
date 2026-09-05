@@ -32,36 +32,38 @@ function App() {
     }
   };
 
-  // Dados mockados (simulados) para o primeiro bloco de produtos na tela inicial
-  const homeProducts = [
-    { id: 1, name: 'Soft chairs', price: '19', image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?q=80&w=150&auto=format&fit=crop' },
-    { id: 2, name: 'Sofa & chair', price: '19', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=150&auto=format&fit=crop' },
-    { id: 3, name: 'Kitchen mixer', price: '100', image: 'https://images.unsplash.com/photo-1593998066526-65fcab3021a2?q=80&w=150&auto=format&fit=crop' },
-    { id: 4, name: 'Smart watches', price: '19', image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=150&auto=format&fit=crop' },
-    { id: 5, name: 'Coffee maker', price: '10', image: 'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?q=80&w=150&auto=format&fit=crop' },
-    { id: 6, name: 'Home appliance', price: '90', image: 'https://images.unsplash.com/photo-1585223199586-a3bd8d23469b?q=80&w=150&auto=format&fit=crop' },
-    { id: 7, name: 'Plant pot', price: '19', image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=150&auto=format&fit=crop' },
-    { id: 8, name: 'Sofa & chair', price: '19', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=150&auto=format&fit=crop' },
-    // Adicionando novos itens para compra como solicitado
-    { id: 9, name: 'Dining Table', price: '150', image: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?q=80&w=150&auto=format&fit=crop' },
-    { id: 10, name: 'Modern Lamp', price: '45', image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=150&auto=format&fit=crop' },
-    { id: 11, name: 'Wall Clock', price: '25', image: 'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?q=80&w=150&auto=format&fit=crop' },
-    { id: 12, name: 'Bookshelf', price: '85', image: 'https://images.unsplash.com/photo-1594620302200-9a762244a156?q=80&w=150&auto=format&fit=crop' }
-  ];
-
-  // Mapear produtos recebidos da API para o formato esperado pelo CategoryBlock
-  const apiProductsMapped = products.slice(0, 8).map(p => ({
+  // Mapeia os primeiros 12 produtos recebidos da API para o bloco "Home and outdoor products"
+  const apiHomeProductsMapped = products.slice(0, 12).map(p => ({
     id: p.id,
     name: p.name,
     price: Number(p.price).toFixed(0),
-    image: null // A API não fornece imagem por padrão, então deixamos nulo
+    image: p.image // Agora a API suporta retornar a imagem
   }));
 
-  // Completar com dados simulados caso a API retorne menos de 8 itens para não quebrar o layout
-  const electronicsProducts = apiProductsMapped.length === 8 ? apiProductsMapped : [
-    ...apiProductsMapped,
-    ...Array(8 - apiProductsMapped.length).fill(0).map((_, i) => ({
-      id: `mock-${i}`,
+  // Completar com dados simulados caso a API retorne menos de 12 itens
+  const homeProducts = apiHomeProductsMapped.length === 12 ? apiHomeProductsMapped : [
+    ...apiHomeProductsMapped,
+    ...Array(12 - apiHomeProductsMapped.length).fill(0).map((_, i) => ({
+      id: `mock-home-${i}`,
+      name: 'Product pending',
+      price: '99',
+      image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?q=80&w=150&auto=format&fit=crop'
+    }))
+  ];
+
+  // Mapeia os produtos a partir do índice 12 da API para o bloco "Consumer electronics and gadgets"
+  const apiElectronicsMapped = products.slice(12, 20).map(p => ({
+    id: p.id,
+    name: p.name,
+    price: Number(p.price).toFixed(0),
+    image: p.image
+  }));
+
+  // Completar com dados simulados caso a API retorne menos itens para não quebrar o layout
+  const electronicsProducts = apiElectronicsMapped.length === 8 ? apiElectronicsMapped : [
+    ...apiElectronicsMapped,
+    ...Array(8 - apiElectronicsMapped.length).fill(0).map((_, i) => ({
+      id: `mock-elec-${i}`,
       name: 'Product from API pending',
       price: '99',
       image: 'https://images.unsplash.com/photo-1550009158-9ebf6d173cdea?q=80&w=150&auto=format&fit=crop'
@@ -116,6 +118,14 @@ function App() {
                 products.map((product) => (
                   <div key={product.id} className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col justify-between">
                     <div>
+                      {/* Exibe a imagem caso a API retorne */}
+                      <div className="h-32 mb-3 flex items-center justify-center">
+                        {product.image ? (
+                          <img src={product.image} alt={product.name} className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal rounded-md" />
+                        ) : (
+                          <div className="w-full h-full bg-gray-100 dark:bg-gray-800 rounded-md"></div>
+                        )}
+                      </div>
                       <h3 className="font-medium text-gray-800 dark:text-gray-100 text-sm line-clamp-2">{product.name}</h3>
                       <p className="text-blue-600 dark:text-blue-400 font-bold mt-2">
                         R$ {Number(product.price).toFixed(2).replace('.', ',')}
